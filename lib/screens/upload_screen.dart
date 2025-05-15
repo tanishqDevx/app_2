@@ -159,7 +159,7 @@ class _UploadScreenState extends State<UploadScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Your file should include columns for Particulars, SALES, CASH, kotak/hdfc, G PAY, and PAYMENT',
+                              'Submit your daily report in XLSX or XLS format',
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
