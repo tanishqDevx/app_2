@@ -39,64 +39,64 @@ class HomeScreen extends StatelessWidget {
             // Dashboard cards
             GridView.count(
               crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
               shrinkWrap: true,
+              childAspectRatio: 0.75,  // Made cards even taller (was 0.85)
               physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
               children: [
                 DashboardCard(
-                  title: 'Upload Report',
+                  title: 'Upload',
                   value: 'Daily XLSX',
-                  description: 'Upload your daily transaction data',
+                  description: 'Upload your daily\ntransaction data',
                   icon: Icons.upload_file,
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const UploadScreen()),
                   ),
-                  buttonText: 'Upload File',
+                  buttonText: 'Upload',
                 ),
                 DashboardCard(
-                  title: 'View Credits',
+                  title: 'Credits',
                   value: 'Outstanding',
-                  description: 'Track customer credits and payments',
+                  description: 'Track customer\ncredits', // Line break for better fit
                   icon: Icons.credit_card,
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const CreditsScreen()),
                   ),
-                  buttonText: 'View Credits',
+                  buttonText: 'View',
                   buttonVariant: 'outline',
                 ),
                 DashboardCard(
-                  title: 'Transactions',
-                  value: 'All Records',
-                  description: 'View all transaction history',
+                  title: 'History',  // Shortened from 'Transactions'
+                  value: 'Records',  // Shortened from 'All Records'
+                  description: 'View transaction\nhistory', // Line break for better fit
                   icon: Icons.receipt_long,
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const TransactionsScreen()),
                   ),
-                  buttonText: 'View Transactions',
+                  buttonText: 'View',
                   buttonVariant: 'outline',
                 ),
                 DashboardCard(
                   title: 'Reports',
                   value: 'Analytics',
-                  description: 'View reports and statistics',
+                  description: 'View reports and\nstatistics', // Line break for better fit
                   icon: Icons.pie_chart,
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const ReportsScreen()),
                   ),
-                  buttonText: 'View Reports',
+                  buttonText: 'View',
                   buttonVariant: 'outline',
                 ),
               ],
             ),
             
             const SizedBox(height: 24),
-            
-            // Daily summary
             const DailySummaryCard(),
           ],
         ),
