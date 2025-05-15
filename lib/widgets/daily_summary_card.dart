@@ -62,7 +62,7 @@ class _DailySummaryCardState extends State<DailySummaryCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Latest Daily Summary',
+                      'Daily Summary',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     if (_summary != null)
@@ -112,36 +112,26 @@ class _DailySummaryCardState extends State<DailySummaryCard> {
                           ],
                         ),
                       )
-                    : GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          _SummaryItem(
-                            label: 'Sales',
-                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_sales'] ?? 0)}',
-                          ),
-                          _SummaryItem(
-                            label: 'Received',
-                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_received'] ?? 0)}',
-                          ),
-                          _SummaryItem(
-                            label: 'Outstanding',
-                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_outstanding'] ?? 0)}',
-                          ),
-                          _SummaryItem(
-                            label: 'Expenses',
-                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_expenses'] ?? 0)}',
-                          ),
-                          _SummaryItem(
-                            label: 'Net Cash Flow',
-                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['net_cash_flow'] ?? 0)}',
-                            valueColor: (_summary!['net_cash_flow'] ?? 0) >= 0 ? Colors.green : Colors.red,
-                          ),
-                        ],
-                      ),
+                    : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SummaryItem(
+                          label: 'Sales',
+                          value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_sales'] ?? 0)}',
+                        ),
+                        const SizedBox(height: 12),
+                        _SummaryItem(
+                          label: 'Received',
+                          value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_received'] ?? 0)}',
+                        ),
+                        const SizedBox(height: 12),
+                        _SummaryItem(
+                          label: 'Outstanding',
+                          value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_outstanding'] ?? 0)}',
+                        ),
+                      ],
+                    ),
+
           ],
         ),
       ),
