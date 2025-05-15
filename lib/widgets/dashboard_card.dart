@@ -8,7 +8,7 @@ class DashboardCard extends StatelessWidget {
   final VoidCallback onTap;
   final String buttonText;
   final String buttonVariant;
-
+  
   const DashboardCard({
     Key? key,
     required this.title,
@@ -23,72 +23,54 @@ class DashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Top Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          title,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).textTheme.bodySmall?.color,
-                              ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Icon(
-                        icon,
-                        size: 20,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Value
                   Text(
-                    value,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    title,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                    ),
                   ),
-                  const SizedBox(height: 4),
-
-                  // Description
-                  Text(
-                    description,
-                    style: Theme.of(context).textTheme.bodySmall,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-
-                  const Spacer(), // Pushes button to bottom safely
-
-                  // Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: buttonVariant == 'outline'
-                        ? OutlinedButton(
-                            onPressed: onTap,
-                            child: Text(buttonText),
-                          )
-                        : ElevatedButton(
-                            onPressed: onTap,
-                            child: Text(buttonText),
-                          ),
+                  Icon(
+                    icon,
+                    size: 20,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
                   ),
                 ],
-              );
-            },
+              ),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: buttonVariant == 'outline'
+                    ? OutlinedButton(
+                        onPressed: onTap,
+                        child: Text(buttonText),
+                      )
+                    : ElevatedButton(
+                        onPressed: onTap,
+                        child: Text(buttonText),
+                      ),
+              ),
+            ],
           ),
         ),
       ),

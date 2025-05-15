@@ -117,7 +117,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                   _SummaryCard(
                                     title: 'Total Received',
                                     value: '₹${NumberFormat('#,##,###.##').format(_summaryStats!['total_received'] ?? 0)}',
-                                    subtitle: 'Cash + HDFC + GPay',
+                                    subtitle: 'Cash + hdfc + GPay',
                                   ),
                                   _SummaryCard(
                                     title: 'Outstanding',

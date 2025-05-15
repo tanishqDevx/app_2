@@ -1,0 +1,4152 @@
+=== Directory: /home/tanishq/Documents/app_2/lib ===
+--- File: main.dart ---
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/screens/home_screen.dart';
+import 'package:credit_tracker/theme/app_theme.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Set preferred orientations
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  
+  // Initialize database
+  final databaseProvider = DatabaseProvider();
+  await databaseProvider.init();
+  
+  runApp(
+    ChangeNotifierProvider.value(
+      value: databaseProvider,
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Credit Tracker',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      home: const HomeScreen(),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/theme ===
+--- File: app_theme.dart ---
+import 'package:flutter/material.dart';
+
+class AppTheme {
+  static const Color primaryColor = Color(0xFF6750A4);
+  static const Color secondaryColor = Color(0xFF625B71);
+  static const Color errorColor = Color(0xFFB3261E);
+  static const Color backgroundColor = Color(0xFFF5F5F5);
+  static const Color cardColor = Colors.white;
+  static const Color textColor = Color(0xFF1C1B1F);
+  static const Color textSecondaryColor = Color(0xFF49454F);
+
+  // Dark theme colors
+  static const Color darkPrimaryColor = Color(0xFFD0BCFF);
+  static const Color darkSecondaryColor = Color(0xFFCCC2DC);
+  static const Color darkErrorColor = Color(0xFFF2B8B5);
+  static const Color darkBackgroundColor = Color(0xFF1C1B1F);
+  static const Color darkCardColor = Color(0xFF2D2D2D);
+  static const Color darkTextColor = Color(0xFFE6E1E5);
+  static const Color darkTextSecondaryColor = Color(0xFFCAC4D0);
+
+  static ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.light(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        error: errorColor,
+        background: backgroundColor,
+        surface: cardColor,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onError: Colors.white,
+        onBackground: textColor,
+        onSurface: textColor,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
+        elevation: 0,
+      ),
+      cardTheme: CardTheme(
+        color: cardColor,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primaryColor,
+          side: const BorderSide(color: primaryColor),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: primaryColor),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      ),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+        displayMedium: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          color: textColor,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 14,
+          color: textColor,
+        ),
+        bodySmall: TextStyle(
+          fontSize: 12,
+          color: textSecondaryColor,
+        ),
+      ),
+    );
+  }
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.dark(
+        primary: darkPrimaryColor,
+        secondary: darkSecondaryColor,
+        error: darkErrorColor,
+        background: darkBackgroundColor,
+        surface: darkCardColor,
+        onPrimary: Colors.black,
+        onSecondary: Colors.black,
+        onError: Colors.black,
+        onBackground: darkTextColor,
+        onSurface: darkTextColor,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: darkBackgroundColor,
+        foregroundColor: darkTextColor,
+        elevation: 0,
+      ),
+      cardTheme: CardTheme(
+        color: darkCardColor,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: darkPrimaryColor,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: darkPrimaryColor,
+          side: const BorderSide(color: darkPrimaryColor),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: darkPrimaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: darkCardColor,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: darkPrimaryColor),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      ),
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: darkTextColor,
+        ),
+        displayMedium: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: darkTextColor,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: darkTextColor,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: darkTextColor,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: darkTextColor,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          color: darkTextColor,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 14,
+          color: darkTextColor,
+        ),
+        bodySmall: TextStyle(
+          fontSize: 12,
+          color: darkTextSecondaryColor,
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/widgets ===
+--- File: payment_timeline.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+
+class PaymentTimeline extends StatefulWidget {
+  final String customerName;
+  
+  const PaymentTimeline({
+    Key? key,
+    required this.customerName,
+  }) : super(key: key);
+
+  @override
+  _PaymentTimelineState createState() => _PaymentTimelineState();
+}
+
+class _PaymentTimelineState extends State<PaymentTimeline> {
+  List<Map<String, dynamic>> _timelineData = [];
+  List<Map<String, dynamic>> _paymentMethods = [];
+  bool _isLoading = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadTimelineData();
+  }
+  
+  Future<void> _loadTimelineData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final data = await Provider.of<DatabaseProvider>(context, listen: false)
+          .getCreditTimeline(widget.customerName);
+      
+      setState(() {
+        _timelineData = List<Map<String, dynamic>>.from(data['timeline']);
+        _paymentMethods = List<Map<String, dynamic>>.from(data['payment_methods']);
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading timeline data: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Payment Timeline Card
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Payment Timeline',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Visualizing credit balance over time',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 16),
+                        _timelineData.isEmpty
+                            ? const SizedBox(
+                                height: 200,
+                                child: Center(
+                                  child: Text('No timeline data available'),
+                                ),
+                              )
+                            : SizedBox(
+                                height: 300,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.bar_chart,
+                                        size: 64,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'Chart visualization would appear here',
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Using FL Chart in a real implementation',
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        '${_timelineData.length} data points available',
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Credit Health Card
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Credit Health Indicators',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Payment consistency and behavior metrics',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Payment Consistency Score
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Payment Consistency Score',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '7/10',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: 0.7,
+                                backgroundColor: Colors.grey[300],
+                                color: Theme.of(context).primaryColor,
+                                minHeight: 8,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Based on payment regularity and completeness',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Average Days to Pay
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Average Days to Pay',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '15 days',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: 0.85,
+                                backgroundColor: Colors.grey[300],
+                                color: Colors.green,
+                                minHeight: 8,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Average time between sale and payment',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 24),
+                        const Divider(),
+                        const SizedBox(height: 16),
+                        
+                        // Payment Method Breakdown
+                        Text(
+                          'Payment Method Breakdown',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 16),
+                        _paymentMethods.isEmpty
+                            ? const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Text('No payment method data available'),
+                                ),
+                              )
+                            : Row(
+                                children: _paymentMethods.map((method) {
+                                  return Expanded(
+                                    child: Card(
+                                      color: Theme.of(context).colorScheme.surface,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              '${method['percentage']}%',
+                                              style: Theme.of(context).textTheme.titleLarge,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              method['method'],
+                                              style: Theme.of(context).textTheme.bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/widgets ===
+--- File: custom_date_picker.dart ---
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class CustomDatePicker extends StatelessWidget {
+  final DateTime selectedDate;
+  final Function(DateTime) onDateChanged;
+  
+  const CustomDatePicker({
+    Key? key,
+    required this.selectedDate,
+    required this.onDateChanged,
+  }) : super(key: key);
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    
+    if (picked != null && picked != selectedDate) {
+      onDateChanged(picked);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => _selectDate(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.withOpacity(0.5)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.calendar_today),
+            const SizedBox(width: 12),
+            Text(
+              DateFormat('dd MMMM, yyyy').format(selectedDate),
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const Spacer(),
+            const Icon(Icons.arrow_drop_down),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/widgets ===
+--- File: date_range_filter.dart ---
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class DateRangeFilter extends StatefulWidget {
+  final DateTime? fromDate;
+  final DateTime? toDate;
+  final Function(DateTime?, DateTime?) onDateRangeChanged;
+  
+  const DateRangeFilter({
+    Key? key,
+    this.fromDate,
+    this.toDate,
+    required this.onDateRangeChanged,
+  }) : super(key: key);
+
+  @override
+  _DateRangeFilterState createState() => _DateRangeFilterState();
+}
+
+class _DateRangeFilterState extends State<DateRangeFilter> {
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  
+  @override
+  void initState() {
+    super.initState();
+    _fromDate = widget.fromDate;
+    _toDate = widget.toDate;
+  }
+  
+  Future<void> _selectFromDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _fromDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    
+    if (picked != null && picked != _fromDate) {
+      setState(() {
+        _fromDate = picked;
+      });
+      widget.onDateRangeChanged(_fromDate, _toDate);
+    }
+  }
+  
+  Future<void> _selectToDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _toDate ?? DateTime.now(),
+      firstDate: _fromDate ?? DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    
+    if (picked != null && picked != _toDate) {
+      setState(() {
+        _toDate = picked;
+      });
+      widget.onDateRangeChanged(_fromDate, _toDate);
+    }
+  }
+  
+  void _clearDates() {
+    setState(() {
+      _fromDate = null;
+      _toDate = null;
+    });
+    widget.onDateRangeChanged(null, null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'From Date',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      InkWell(
+                        onTap: () => _selectFromDate(context),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.withOpacity(0.5)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _fromDate != null
+                                    ? DateFormat('dd/MM/yyyy').format(_fromDate!)
+                                    : 'Select date',
+                                style: TextStyle(
+                                  color: _fromDate != null
+                                      ? Theme.of(context).textTheme.bodyLarge?.color
+                                      : Colors.grey,
+                                ),
+                              ),
+                              const Icon(Icons.calendar_today, size: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'To Date',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      InkWell(
+                        onTap: () => _selectToDate(context),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.withOpacity(0.5)),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _toDate != null
+                                    ? DateFormat('dd/MM/yyyy').format(_toDate!)
+                                    : 'Select date',
+                                style: TextStyle(
+                                  color: _toDate != null
+                                      ? Theme.of(context).textTheme.bodyLarge?.color
+                                      : Colors.grey,
+                                ),
+                              ),
+                              const Icon(Icons.calendar_today, size: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (_fromDate != null || _toDate != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: _clearDates,
+                  icon: const Icon(Icons.clear, size: 16),
+                  label: const Text('Clear Dates'),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/widgets ===
+--- File: dashboard_card.dart ---
+import 'package:flutter/material.dart';
+
+class DashboardCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final String description;
+  final IconData icon;
+  final VoidCallback onTap;
+  final String buttonText;
+  final String buttonVariant;
+  
+  const DashboardCard({
+    Key? key,
+    required this.title,
+    required this.value,
+    required this.description,
+    required this.icon,
+    required this.onTap,
+    required this.buttonText,
+    this.buttonVariant = 'default',
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                    ),
+                  ),
+                  Icon(
+                    icon,
+                    size: 20,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: buttonVariant == 'outline'
+                    ? OutlinedButton(
+                        onPressed: onTap,
+                        child: Text(buttonText),
+                      )
+                    : ElevatedButton(
+                        onPressed: onTap,
+                        child: Text(buttonText),
+                      ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/widgets ===
+--- File: daily_summary_card.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/screens/daily_report_screen.dart';
+
+class DailySummaryCard extends StatefulWidget {
+  const DailySummaryCard({Key? key}) : super(key: key);
+
+  @override
+  _DailySummaryCardState createState() => _DailySummaryCardState();
+}
+
+class _DailySummaryCardState extends State<DailySummaryCard> {
+  Map<String, dynamic>? _summary;
+  bool _isLoading = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadLatestSummary();
+  }
+  
+  Future<void> _loadLatestSummary() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final summary = await Provider.of<DatabaseProvider>(context, listen: false).getLatestSummary();
+      
+      setState(() {
+        _summary = summary;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading latest summary: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Latest Daily Summary',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    if (_summary != null)
+                      Text(
+                        'For ${DateFormat('dd/MM/yyyy').format(DateTime.parse(_summary!['date']))}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                  ],
+                ),
+                if (_summary != null)
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DailyReportScreen(
+                            date: _summary!['date'],
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Text('View Details'),
+                    label: const Icon(Icons.arrow_forward, size: 16),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _isLoading
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : _summary == null
+                    ? Center(
+                        child: Column(
+                          children: [
+                            const Text('Upload your first daily report to see summary statistics'),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/upload');
+                              },
+                              child: const Text('Upload Report'),
+                            ),
+                          ],
+                        ),
+                      )
+                    : GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          _SummaryItem(
+                            label: 'Sales',
+                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_sales'] ?? 0)}',
+                          ),
+                          _SummaryItem(
+                            label: 'Received',
+                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_received'] ?? 0)}',
+                          ),
+                          _SummaryItem(
+                            label: 'Outstanding',
+                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_outstanding'] ?? 0)}',
+                          ),
+                          _SummaryItem(
+                            label: 'Expenses',
+                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['total_expenses'] ?? 0)}',
+                          ),
+                          _SummaryItem(
+                            label: 'Net Cash Flow',
+                            value: '₹${NumberFormat('#,##,###.##').format(_summary!['net_cash_flow'] ?? 0)}',
+                            valueColor: (_summary!['net_cash_flow'] ?? 0) >= 0 ? Colors.green : Colors.red,
+                          ),
+                        ],
+                      ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryItem extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color? valueColor;
+  
+  const _SummaryItem({
+    Key? key,
+    required this.label,
+    required this.value,
+    this.valueColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).textTheme.bodySmall?.color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: valueColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/widgets ===
+--- File: daily_reports_list.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/screens/daily_report_screen.dart';
+
+class DailyReportsList extends StatefulWidget {
+  final DateTime? fromDate;
+  final DateTime? toDate;
+  
+  const DailyReportsList({
+    Key? key,
+    this.fromDate,
+    this.toDate,
+  }) : super(key: key);
+
+  @override
+  _DailyReportsListState createState() => _DailyReportsListState();
+}
+
+class _DailyReportsListState extends State<DailyReportsList> {
+  List<Map<String, dynamic>> _reports = [];
+  bool _isLoading = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadReports();
+  }
+  
+  @override
+  void didUpdateWidget(DailyReportsList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.fromDate != oldWidget.fromDate || widget.toDate != oldWidget.toDate) {
+      _loadReports();
+    }
+  }
+  
+  Future<void> _loadReports() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final fromDateStr = widget.fromDate != null ? DateFormat('yyyy-MM-dd').format(widget.fromDate!) : null;
+      final toDateStr = widget.toDate != null ? DateFormat('yyyy-MM-dd').format(widget.toDate!) : null;
+      
+      final reports = await Provider.of<DatabaseProvider>(context, listen: false).getDailyReports(
+        fromDate: fromDateStr,
+        toDate: toDateStr,
+      );
+      
+      setState(() {
+        _reports = reports;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading reports: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : _reports.isEmpty
+            ? const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('No daily reports found for the selected date range'),
+                ),
+              )
+            : ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _reports.length,
+                itemBuilder: (context, index) {
+                  final report = _reports[index];
+                  final date = report['date'] as String;
+                  final totalSales = report['total_sales'] as double? ?? 0;
+                  final totalReceived = report['total_received'] as double? ?? 0;
+                  final netCashFlow = report['net_cash_flow'] as double? ?? 0;
+                  
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8.0),
+                    child: ListTile(
+                      leading: const CircleAvatar(
+                        child: Icon(Icons.calendar_today),
+                      ),
+                      title: Text(DateFormat('dd/MM/yyyy').format(DateTime.parse(date))),
+                      subtitle: Text(
+                        'Sales: ₹${NumberFormat('#,##,###').format(totalSales)} • Received: ₹${NumberFormat('#,##,###').format(totalReceived)}',
+                      ),
+                      trailing: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '₹${NumberFormat('#,##,###').format(netCashFlow)}',
+                            style: TextStyle(
+                              color: netCashFlow >= 0 ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Text('Net Cash Flow', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DailyReportScreen(date: date),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+  }
+}
+
+=== Directory: /home/tanishq/Documents/app_2/lib/widgets ===
+--- File: summary_charts.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:intl/intl.dart';
+
+class SummaryCharts extends StatefulWidget {
+  final DateTime? fromDate;
+  final DateTime? toDate;
+  
+  const SummaryCharts({
+    Key? key,
+    this.fromDate,
+    this.toDate,
+  }) : super(key: key);
+
+  @override
+  _SummaryChartsState createState() => _SummaryChartsState();
+}
+
+class _SummaryChartsState extends State<SummaryCharts> with SingleTickerProviderStateMixin {
+  Map<String, dynamic>? _chartData;
+  bool _isLoading = true;
+  late TabController _tabController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 5, vsync: this);
+    _loadChartData();
+  }
+  
+  @override
+  void didUpdateWidget(SummaryCharts oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.fromDate != oldWidget.fromDate || widget.toDate != oldWidget.toDate) {
+      _loadChartData();
+    }
+  }
+  
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+  
+  Future<void> _loadChartData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final fromDateStr = widget.fromDate != null ? DateFormat('yyyy-MM-dd').format(widget.fromDate!) : null;
+      final toDateStr = widget.toDate != null ? DateFormat('yyyy-MM-dd').format(widget.toDate!) : null;
+      
+      final chartData = await Provider.of<DatabaseProvider>(context, listen: false).getChartData(
+        fromDate: fromDateStr,
+        toDate: toDateStr,
+      );
+      
+      setState(() {
+        _chartData = chartData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading chart data: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: const [
+            Tab(text: 'Sales'),
+            Tab(text: 'Received'),
+            Tab(text: 'Expenses'),
+            Tab(text: 'Outstanding'),
+            Tab(text: 'Cash Flow'),
+          ],
+          labelColor: Theme.of(context).primaryColor,
+          unselectedLabelColor: Colors.grey,
+          indicatorColor: Theme.of(context).primaryColor,
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 300,
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _chartData == null || (_chartData!['dates'] as List).isEmpty
+                  ? const Center(
+                      child: Text('No chart data available for the selected date range'),
+                    )
+                  : TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildChartPlaceholder('Sales', 'Line chart'),
+                        _buildChartPlaceholder('Received payments', 'Line chart'),
+                        _buildChartPlaceholder('Expenses', 'Bar chart'),
+                        _buildChartPlaceholder('Outstanding credits', 'Line chart'),
+                        _buildChartPlaceholder('Net cash flow', 'Area chart'),
+                      ],
+                    ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildChartPlaceholder(String title, String chartType) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.bar_chart,
+            size: 64,
+            color: Colors.grey,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '$chartType visualization would appear here',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Using FL Chart in a real implementation',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '$title over time: ${(_chartData!['dates'] as List).length} data points',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+=== Directory: /home/tanishq/Documents/app_2/lib/widgets ===
+--- File: transaction_list.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/models/transaction.dart';
+
+class TransactionList extends StatefulWidget {
+  final String? customerName;
+  final String? date;
+  
+  const TransactionList({
+    Key? key,
+    this.customerName,
+    this.date,
+  }) : super(key: key);
+
+  @override
+  _TransactionListState createState() => _TransactionListState();
+}
+
+class _TransactionListState extends State<TransactionList> {
+  List<Transaction> _transactions = [];
+  bool _isLoading = true;
+  String _transactionType = 'all';
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadTransactions();
+  }
+  
+  Future<void> _loadTransactions() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      List<Transaction> transactions;
+      
+      if (widget.customerName != null) {
+        transactions = await Provider.of<DatabaseProvider>(context, listen: false)
+            .getTransactionsByCustomer(widget.customerName!);
+      } else if (widget.date != null) {
+        transactions = await Provider.of<DatabaseProvider>(context, listen: false)
+            .getTransactionsByDate(widget.date!);
+      } else {
+        transactions = await Provider.of<DatabaseProvider>(context, listen: false).getTransactions();
+      }
+      
+      setState(() {
+        _transactions = transactions;
+        _filterTransactions();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading transactions: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  void _filterTransactions() {
+    if (_transactionType == 'all') {
+      // No filtering needed
+      return;
+    }
+    
+    setState(() {
+      _transactions = _transactions.where((transaction) {
+        return transaction.transactionType == _transactionType;
+      }).toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Filter dropdown
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  widget.customerName != null
+                      ? 'Transaction History'
+                      : widget.date != null
+                          ? 'Daily Transactions'
+                          : 'All Transactions',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              SizedBox(
+                width: 150,
+                child: DropdownButtonFormField<String>(
+                  value: _transactionType,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'all', child: Text('All Types')),
+                    DropdownMenuItem(value: 'sale', child: Text('Sales')),
+                    DropdownMenuItem(value: 'repayment', child: Text('Repayments')),
+                    DropdownMenuItem(value: 'expense', child: Text('Expenses')),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _transactionType = value!;
+                    });
+                    _loadTransactions();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        
+        // Transactions list
+        Expanded(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _transactions.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No transactions found',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _transactions.length,
+                      itemBuilder: (context, index) {
+                        final transaction = _transactions[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        widget.customerName != null
+                                            ? DateFormat('dd/MM/yyyy').format(DateTime.parse(transaction.date))
+                                            : transaction.customerName,
+                                        style: Theme.of(context).textTheme.titleMedium,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _getTransactionTypeColor(transaction.transactionType).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        _getTransactionTypeLabel(transaction.transactionType),
+                                        style: TextStyle(
+                                          color: _getTransactionTypeColor(transaction.transactionType),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                
+                                // Transaction details
+                                if (transaction.sales > 0) ...[
+                                  _TransactionDetail(
+                                    label: 'Sales',
+                                    value: '₹${NumberFormat('#,##,###.##').format(transaction.sales)}',
+                                  ),
+                                ],
+                                
+                                if (transaction.cash > 0 || transaction.hdfc > 0 || transaction.gpay > 0) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Received:',
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  if (transaction.cash > 0)
+                                    _TransactionDetail(
+                                      label: 'Cash',
+                                      value: '₹${NumberFormat('#,##,###.##').format(transaction.cash)}',
+                                      valueColor: Colors.green[700],
+                                    ),
+                                  if (transaction.hdfc > 0)
+                                    _TransactionDetail(
+                                      label: 'hdfc',
+                                      value: '₹${NumberFormat('#,##,###.##').format(transaction.hdfc)}',
+                                      valueColor: Colors.green[700],
+                                    ),
+                                  if (transaction.gpay > 0)
+                                    _TransactionDetail(
+                                      label: 'GPay',
+                                      value: '₹${NumberFormat('#,##,###.##').format(transaction.gpay)}',
+                                      valueColor: Colors.green[700],
+                                    ),
+                                ],
+                                
+                                if (transaction.payment > 0) ...[
+                                  const SizedBox(height: 8),
+                                  _TransactionDetail(
+                                    label: 'Expense',
+                                    value: '₹${NumberFormat('#,##,###.##').format(transaction.payment)}',
+                                    valueColor: Colors.red[700],
+                                  ),
+                                ],
+                                
+                                if (transaction.outstanding > 0) ...[
+                                  const SizedBox(height: 8),
+                                  const Divider(),
+                                  _TransactionDetail(
+                                    label: 'Outstanding',
+                                    value: '₹${NumberFormat('#,##,###.##').format(transaction.outstanding)}',
+                                    valueColor: Colors.orange[700],
+                                    isBold: true,
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+        ),
+      ],
+    );
+  }
+  
+  Color _getTransactionTypeColor(String type) {
+    switch (type) {
+      case 'sale':
+        return Colors.blue;
+      case 'repayment':
+        return Colors.green;
+      case 'expense':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+  
+  String _getTransactionTypeLabel(String type) {
+    switch (type) {
+      case 'sale':
+        return 'SALE';
+      case 'repayment':
+        return 'REPAYMENT';
+      case 'expense':
+        return 'EXPENSE';
+      default:
+        return type.toUpperCase();
+    }
+  }
+}
+
+class _TransactionDetail extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color? valueColor;
+  final bool isBold;
+  
+  const _TransactionDetail({
+    Key? key,
+    required this.label,
+    required this.value,
+    this.valueColor,
+    this.isBold = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: valueColor,
+              fontWeight: isBold ? FontWeight.bold : null,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/providers ===
+--- File: database_provider.dart ---
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:excel/excel.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/models/transaction.dart' as model;
+import 'package:credit_tracker/models/credit.dart';
+import 'package:credit_tracker/models/daily_summary.dart';
+
+class DatabaseProvider with ChangeNotifier {
+  static Database? _database;
+  
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+
+  Future<Database> _initDatabase() async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, 'credit_tracker.db');
+    
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: _createDb,
+    );
+  }
+
+  Future<void> _createDb(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE transactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        customer_name TEXT NOT NULL,
+        sales REAL DEFAULT 0,
+        cash REAL DEFAULT 0,
+        hdfc REAL DEFAULT 0,
+        gpay REAL DEFAULT 0,
+        payment REAL DEFAULT 0,
+        transaction_type TEXT CHECK(transaction_type IN ('sale', 'repayment', 'expense')),
+        outstanding REAL DEFAULT 0,
+        related_credit_id INTEGER,
+        FOREIGN KEY (related_credit_id) REFERENCES transactions(id)
+      )
+    ''');
+    
+    // Create indexes for faster lookups
+    await db.execute('CREATE INDEX idx_customer_name ON transactions(customer_name)');
+    await db.execute('CREATE INDEX idx_date ON transactions(date)');
+  }
+
+  Future<void> init() async {
+    await database;
+  }
+
+  // Update the processExcelFile method to handle dynamic column headers and apply filters
+
+  // Replace the existing processExcelFile method with this enhanced version
+  Future<Map<String, dynamic>> processExcelFile(File file, String date) async {
+    final bytes = await file.readAsBytes();
+    final excel = Excel.decodeBytes(bytes);
+    
+    final db = await database;
+    int rowsProcessed = 0;
+    
+    // Start a transaction for better performance
+    await db.transaction((txn) async {
+      // Get the first sheet
+      final sheet = excel.tables.keys.first;
+      final rows = excel.tables[sheet]!.rows;
+      
+      if (rows.length < 3) {
+        throw Exception('Excel file does not have enough rows');
+      }
+      
+      // Get the header row (second row in the sheet)
+      final headerRow = rows[1];
+      
+      // Find column indexes dynamically
+      Map<String, int> columnIndexes = {};
+      
+      for (int i = 0; i < headerRow.length; i++) {
+        final cell = headerRow[i];
+        if (cell == null) continue;
+        
+        final value = cell.value.toString().toLowerCase();
+        
+        // Store all column names and their indexes
+        columnIndexes[value] = i;
+        
+        // Also check for variations of column names
+        if (value.contains('particular')) {
+          columnIndexes['particulars'] = i;
+        } else if (value.contains('sale')) {
+          columnIndexes['sales'] = i;
+        } else if (value.contains('cash')) {
+          columnIndexes['cash'] = i;
+        } else if (value.contains('payment')) {
+          columnIndexes['payment'] = i;
+        }
+      }
+      
+      // Ensure we have the required columns
+      if (!columnIndexes.containsKey('particulars')) {
+        throw Exception('Could not find "Particulars" column');
+      }
+      if (!columnIndexes.containsKey('sales')) {
+        throw Exception('Could not find "SALES" column');
+      }
+      if (!columnIndexes.containsKey('payment')) {
+        throw Exception('Could not find "PAYMENT" column');
+      }
+      
+      // Get all payment method columns (excluding particulars, sales, and payment)
+      List<String> paymentMethods = [];
+      for (var entry in columnIndexes.entries) {
+        String key = entry.key.toLowerCase();
+        if (key != 'particulars' && key != 'sales' && key != 'payment' && 
+            !key.contains('total') && !key.contains('date')) {
+          paymentMethods.add(entry.key);
+        }
+      }
+      
+      // Process each row (start from the third row)
+      for (int i = 2; i < rows.length - 2; i++) {
+        final row = rows[i];
+        if (row.isEmpty || row.length <= columnIndexes['particulars']!) continue;
+        
+        // Extract customer name
+        final nameCell = row[columnIndexes['particulars']!];
+        if (nameCell == null || nameCell.value.toString().trim().isEmpty) continue;
+        
+        final customerName = nameCell.value.toString().trim();
+        
+        // Apply filters - skip rows with "manoj ji" or "cashin office"
+        if (customerName.toLowerCase().contains('manoj ji') || 
+            customerName.toLowerCase().contains('cashin office')) {
+          continue;
+        }
+        
+        // Skip the TOTAL row
+        if (customerName.toLowerCase().contains('total')) {
+          continue;
+        }
+        
+        // Extract sales amount
+        final sales = _getCellNumericValue(row, columnIndexes['sales']!);
+        
+        // Extract payment amount
+        final payment = _getCellNumericValue(row, columnIndexes['payment']!);
+        
+        // Extract all payment method amounts
+        double cash = 0;
+        double hdfc = 0;
+        double gpay = 0;
+        
+        for (String method in paymentMethods) {
+          if (columnIndexes.containsKey(method)) {
+            double amount = _getCellNumericValue(row, columnIndexes[method]!);
+            
+            // Categorize payment methods
+            if (method.toLowerCase().contains('cash')) {
+              cash = amount;
+            } else if (method.toLowerCase().contains('hdfc') || 
+                      method.toLowerCase().contains('kotak') || 
+                      method.toLowerCase().contains('esco')) {
+              hdfc = amount;
+            } else if (method.toLowerCase().contains('g pay') || 
+                      method.toLowerCase().contains('gpay') || 
+                      method.toLowerCase().contains('google')) {
+              gpay = amount;
+            }
+          }
+        }
+        
+        // Skip rows where all numeric values are 0
+        if (sales == 0 && cash == 0 && hdfc == 0 && gpay == 0 && payment == 0) continue;
+        
+        // Determine transaction type and calculate outstanding
+        final received = cash + hdfc + gpay;
+        double outstanding = 0;
+        String transactionType;
+        
+        if (sales > 0) {
+          // This is a sale
+          transactionType = 'sale';
+          outstanding = sales - received;
+        } else if (received > 0 && sales == 0) {
+          // This is a repayment
+          transactionType = 'repayment';
+        } else if (payment > 0) {
+          // This is an expense
+          transactionType = 'expense';
+        } else {
+          // Skip rows that don't fit any category
+          continue;
+        }
+        
+        // Insert into database
+        await txn.insert(
+          'transactions',
+          {
+            'date': date,
+            'customer_name': customerName,
+            'sales': sales,
+            'cash': cash,
+            'hdfc': hdfc,
+            'gpay': gpay,
+            'payment': payment,
+            'transaction_type': transactionType,
+            'outstanding': outstanding,
+          },
+        );
+        
+        rowsProcessed++;
+      }
+    });
+    
+    notifyListeners();
+    
+    return {
+      'status': 'success',
+      'rows_processed': rowsProcessed,
+      'date': date,
+    };
+  }
+
+  // Helper method to get numeric value from cell
+  double _getCellNumericValue(List<dynamic> row, int index) {
+    if (index >= row.length || row[index] == null) return 0;
+    
+    final cell = row[index];
+    if (cell.value == null) return 0;
+    
+    if (cell.value is num) {
+      return (cell.value as num).toDouble();
+    } else {
+      try {
+        return double.parse(cell.value.toString().replaceAll(',', ''));
+      } catch (e) {
+        return 0;
+      }
+    }
+  }
+
+  // Get all transactions
+  Future<List<model.Transaction>> getTransactions({
+    String? fromDate,
+    String? toDate,
+    String? customerName,
+    String? transactionType,
+  }) async {
+    final db = await database;
+    
+    String query = 'SELECT * FROM transactions';
+    List<String> conditions = [];
+    List<dynamic> params = [];
+    
+    if (fromDate != null) {
+      conditions.add('date >= ?');
+      params.add(fromDate);
+    }
+    
+    if (toDate != null) {
+      conditions.add('date <= ?');
+      params.add(toDate);
+    }
+    
+    if (customerName != null) {
+      conditions.add('customer_name = ?');
+      params.add(customerName);
+    }
+    
+    if (transactionType != null) {
+      conditions.add('transaction_type = ?');
+      params.add(transactionType);
+    }
+    
+    if (conditions.isNotEmpty) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+    
+    query += ' ORDER BY date DESC, id DESC';
+    
+    final List<Map<String, dynamic>> maps = await db.rawQuery(query, params);
+    
+    return List.generate(maps.length, (i) {
+      return model.Transaction.fromMap(maps[i]);
+    });
+  }
+
+  // Get transactions by date
+  Future<List<model.Transaction>> getTransactionsByDate(String date) async {
+    final db = await database;
+    
+    final List<Map<String, dynamic>> maps = await db.query(
+      'transactions',
+      where: 'date = ?',
+      whereArgs: [date],
+      orderBy: 'id DESC',
+    );
+    
+    return List.generate(maps.length, (i) {
+      return model.Transaction.fromMap(maps[i]);
+    });
+  }
+
+  // Get transactions by customer
+  Future<List<model.Transaction>> getTransactionsByCustomer(String customerName) async {
+    final db = await database;
+    
+    final List<Map<String, dynamic>> maps = await db.query(
+      'transactions',
+      where: 'customer_name = ?',
+      whereArgs: [customerName],
+      orderBy: 'date DESC, id DESC',
+    );
+    
+    return List.generate(maps.length, (i) {
+      return model.Transaction.fromMap(maps[i]);
+    });
+  }
+
+  // Get all credits (customers with outstanding balances)
+  Future<List<Credit>> getCredits() async {
+    final db = await database;
+    
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT 
+        customer_name,
+        SUM(CASE WHEN transaction_type = 'sale' THEN outstanding ELSE 0 END) -
+        SUM(CASE WHEN transaction_type = 'repayment' THEN (cash + hdfc + gpay) ELSE 0 END) as total_outstanding,
+        MIN(date) as first_date,
+        MAX(date) as last_date,
+        JULIANDAY('now') - JULIANDAY(MIN(date)) as days_outstanding
+      FROM transactions
+      GROUP BY customer_name
+      HAVING total_outstanding > 0
+      ORDER BY days_outstanding DESC
+    ''');
+    
+    return List.generate(maps.length, (i) {
+      return Credit.fromMap(maps[i]);
+    });
+  }
+
+  // Get credit details for a specific customer
+  Future<Credit?> getCreditDetails(String customerName) async {
+    final db = await database;
+    
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT 
+        customer_name,
+        SUM(CASE WHEN transaction_type = 'sale' THEN outstanding ELSE 0 END) -
+        SUM(CASE WHEN transaction_type = 'repayment' THEN (cash + hdfc + gpay) ELSE 0 END) as total_outstanding,
+        MIN(date) as first_date,
+        MAX(date) as last_date,
+        JULIANDAY('now') - JULIANDAY(MIN(date)) as days_outstanding
+      FROM transactions
+      WHERE customer_name = ?
+      GROUP BY customer_name
+    ''', [customerName]);
+    
+    if (maps.isEmpty) return null;
+    
+    return Credit.fromMap(maps.first);
+  }
+
+  // Get payment timeline for a customer
+  Future<Map<String, dynamic>> getCreditTimeline(String customerName) async {
+    final db = await database;
+    
+    // Get timeline data
+    final List<Map<String, dynamic>> timelineMaps = await db.rawQuery('''
+      SELECT 
+        date,
+        SUM(CASE WHEN transaction_type = 'sale' THEN outstanding ELSE 0 END) -
+        SUM(CASE WHEN transaction_type = 'repayment' THEN (cash + hdfc + gpay) ELSE 0 END) as balance
+      FROM transactions
+      WHERE customer_name = ?
+      GROUP BY date
+      ORDER BY date
+    ''', [customerName]);
+    
+    // Get payment method breakdown
+    final List<Map<String, dynamic>> paymentMaps = await db.rawQuery('''
+      SELECT 
+        SUM(cash) as cash_total,
+        SUM(hdfc) as hdfc_total,
+        SUM(gpay) as gpay_total
+      FROM transactions
+      WHERE customer_name = ? AND (cash > 0 OR hdfc > 0 OR gpay > 0)
+    ''', [customerName]);
+    
+    final paymentTotals = paymentMaps.first;
+    
+    List<Map<String, dynamic>> paymentMethods = [];
+    double totalPayments = (paymentTotals['cash_total'] ?? 0) + 
+                          (paymentTotals['hdfc_total'] ?? 0) + 
+                          (paymentTotals['gpay_total'] ?? 0);
+    
+    if (totalPayments > 0) {
+      for (var entry in [
+        {'method': 'Cash', 'amount': paymentTotals['cash_total'] ?? 0},
+        {'method': 'hdfc', 'amount': paymentTotals['hdfc_total'] ?? 0},
+        {'method': 'GPay', 'amount': paymentTotals['gpay_total'] ?? 0},
+      ]) {
+        if (entry['amount'] > 0) {
+          int percentage = ((entry['amount'] as double) / totalPayments * 100).round();
+          paymentMethods.add({
+            'method': entry['method'],
+            'percentage': percentage,
+          });
+        }
+      }
+    }
+    
+    return {
+      'timeline': timelineMaps,
+      'payment_methods': paymentMethods,
+    };
+  }
+
+  // Get daily summary for a specific date
+  Future<DailySummary> getDailySummary(String date) async {
+    final db = await database;
+    
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT 
+        ? as date,
+        SUM(CASE WHEN transaction_type = 'sale' THEN sales ELSE 0 END) as total_sales,
+        SUM(cash) as total_cash,
+        SUM(hdfc) as total_hdfc,
+        SUM(gpay) as total_gpay,
+        SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as total_payment,
+        SUM(cash) + SUM(hdfc) + SUM(gpay) as total_received,
+        SUM(CASE WHEN transaction_type = 'sale' THEN outstanding ELSE 0 END) as total_outstanding,
+        (SUM(cash) + SUM(hdfc) + SUM(gpay)) - SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as net_cash_flow
+      FROM transactions
+      WHERE date = ?
+    ''', [date, date]);
+    
+    // If no data for this date, return zeros
+    if (maps.isEmpty || maps.first['total_sales'] == null) {
+      return DailySummary(
+        date: date,
+        totalSales: 0,
+        totalCash: 0,
+        totalhdfc: 0,
+        totalGpay: 0,
+        totalPayment: 0,
+        totalReceived: 0,
+        totalOutstanding: 0,
+        netCashFlow: 0,
+      );
+    }
+    
+    return DailySummary.fromMap(maps.first);
+  }
+
+  // Get chart data for a specific date
+  Future<Map<String, dynamic>> getDailyCharts(String date) async {
+    final db = await database;
+    
+    // Get payment method distribution
+    final List<Map<String, dynamic>> paymentMaps = await db.rawQuery('''
+      SELECT 
+        SUM(cash) as cash_total,
+        SUM(hdfc) as hdfc_total,
+        SUM(gpay) as gpay_total
+      FROM transactions
+      WHERE date = ? AND (cash > 0 OR hdfc > 0 OR gpay > 0)
+    ''', [date]);
+    
+    final paymentTotals = paymentMaps.first;
+    
+    List<Map<String, dynamic>> paymentMethods = [];
+    double totalPayments = (paymentTotals['cash_total'] ?? 0) + 
+                          (paymentTotals['hdfc_total'] ?? 0) + 
+                          (paymentTotals['gpay_total'] ?? 0);
+    
+    if (totalPayments > 0) {
+      for (var entry in [
+        {'method': 'Cash', 'amount': paymentTotals['cash_total'] ?? 0},
+        {'method': 'hdfc', 'amount': paymentTotals['hdfc_total'] ?? 0},
+        {'method': 'GPay', 'amount': paymentTotals['gpay_total'] ?? 0},
+      ]) {
+        if (entry['amount'] > 0) {
+          int percentage = ((entry['amount'] as double) / totalPayments * 100).round();
+          paymentMethods.add({
+            'method': entry['method'],
+            'amount': entry['amount'],
+            'percentage': percentage,
+          });
+        }
+      }
+    }
+    
+    // Get transaction type distribution
+    final List<Map<String, dynamic>> typeMaps = await db.rawQuery('''
+      SELECT 
+        transaction_type,
+        COUNT(*) as count
+      FROM transactions
+      WHERE date = ?
+      GROUP BY transaction_type
+    ''', [date]);
+    
+    List<Map<String, dynamic>> transactionTypes = [];
+    int totalTransactions = 0;
+    
+    for (var map in typeMaps) {
+      totalTransactions += map['count'] as int;
+    }
+    
+    if (totalTransactions > 0) {
+      for (var map in typeMaps) {
+        int percentage = ((map['count'] as int) / totalTransactions * 100).round();
+        transactionTypes.add({
+          'type': map['transaction_type'],
+          'count': map['count'],
+          'percentage': percentage,
+        });
+      }
+    }
+    
+    return {
+      'payment_methods': paymentMethods,
+      'transaction_types': transactionTypes,
+    };
+  }
+
+  // Get list of all daily reports
+  Future<List<Map<String, dynamic>>> getDailyReports({
+    String? fromDate,
+    String? toDate,
+  }) async {
+    final db = await database;
+    
+    String query = '''
+      SELECT 
+        date,
+        SUM(CASE WHEN transaction_type = 'sale' THEN sales ELSE 0 END) as total_sales,
+        SUM(cash) + SUM(hdfc) + SUM(gpay) as total_received,
+        SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as total_expenses,
+        (SUM(cash) + SUM(hdfc) + SUM(gpay)) - SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as net_cash_flow
+      FROM transactions
+    ''';
+    
+    List<String> conditions = [];
+    List<dynamic> params = [];
+    
+    if (fromDate != null) {
+      conditions.add('date >= ?');
+      params.add(fromDate);
+    }
+    
+    if (toDate != null) {
+      conditions.add('date <= ?');
+      params.add(toDate);
+    }
+    
+    if (conditions.isNotEmpty) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+    
+    query += ' GROUP BY date ORDER BY date DESC';
+    
+    return await db.rawQuery(query, params);
+  }
+
+  // Get latest daily summary
+  Future<Map<String, dynamic>?> getLatestSummary() async {
+    final db = await database;
+    
+    // Get the latest date
+    final List<Map<String, dynamic>> dateMaps = await db.rawQuery(
+      'SELECT MAX(date) as latest_date FROM transactions'
+    );
+    
+    final latestDate = dateMaps.first['latest_date'];
+    if (latestDate == null) return null;
+    
+    // Get summary for the latest date
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+      SELECT 
+        ? as date,
+        SUM(CASE WHEN transaction_type = 'sale' THEN sales ELSE 0 END) as total_sales,
+        SUM(cash) + SUM(hdfc) + SUM(gpay) as total_received,
+        SUM(CASE WHEN transaction_type = 'sale' THEN outstanding ELSE 0 END) as total_outstanding,
+        SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as total_expenses,
+        (SUM(cash) + SUM(hdfc) + SUM(gpay)) - SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as net_cash_flow
+      FROM transactions
+      WHERE date = ?
+    ''', [latestDate, latestDate]);
+    
+    if (maps.isEmpty) return null;
+    
+    return maps.first;
+  }
+
+  // Get summary statistics for a date range
+  Future<Map<String, dynamic>> getSummaryStats({
+    String? fromDate,
+    String? toDate,
+  }) async {
+    final db = await database;
+    
+    String query = '''
+      SELECT 
+        SUM(CASE WHEN transaction_type = 'sale' THEN sales ELSE 0 END) as total_sales,
+        SUM(cash) + SUM(hdfc) + SUM(gpay) as total_received,
+        SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as total_expenses,
+        (SUM(cash) + SUM(hdfc) + SUM(gpay)) - SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as net_cash_flow
+      FROM transactions
+    ''';
+    
+    List<String> conditions = [];
+    List<dynamic> params = [];
+    
+    if (fromDate != null) {
+      conditions.add('date >= ?');
+      params.add(fromDate);
+    }
+    
+    if (toDate != null) {
+      conditions.add('date <= ?');
+      params.add(toDate);
+    }
+    
+    if (conditions.isNotEmpty) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+    
+    final List<Map<String, dynamic>> maps = await db.rawQuery(query, params);
+    
+    // Get total outstanding (current)
+    final List<Map<String, dynamic>> outstandingMaps = await db.rawQuery('''
+      SELECT 
+        SUM(CASE WHEN transaction_type = 'sale' THEN outstanding ELSE 0 END) -
+        SUM(CASE WHEN transaction_type = 'repayment' THEN (cash + hdfc + gpay) ELSE 0 END) as total_outstanding
+      FROM transactions
+    ''');
+    
+    final stats = maps.first;
+    stats['total_outstanding'] = outstandingMaps.first['total_outstanding'] ?? 0;
+    
+    // Add date range to response
+    stats['date_range'] = {
+      'from': fromDate ?? 'all',
+      'to': toDate ?? 'all',
+    };
+    
+    return stats;
+  }
+
+  // Get chart data for reports
+  Future<Map<String, dynamic>> getChartData({
+    String? fromDate,
+    String? toDate,
+  }) async {
+    final db = await database;
+    
+    // Determine date range
+    if (fromDate == null) {
+      final List<Map<String, dynamic>> minDateMaps = await db.rawQuery(
+        'SELECT MIN(date) as min_date FROM transactions'
+      );
+      fromDate = minDateMaps.first['min_date'];
+    }
+    
+    if (toDate == null) {
+      final List<Map<String, dynamic>> maxDateMaps = await db.rawQuery(
+        'SELECT MAX(date) as max_date FROM transactions'
+      );
+      toDate = maxDateMaps.first['max_date'];
+    }
+    
+    if (fromDate == null || toDate == null) {
+      return {
+        'dates': [],
+        'sales': [],
+        'received': [],
+        'expenses': [],
+        'outstanding': [],
+        'net_cash_flow': [],
+      };
+    }
+    
+    // Get all dates in range
+    List<String> dateRange = [];
+    DateTime startDate = DateFormat('yyyy-MM-dd').parse(fromDate);
+    DateTime endDate = DateFormat('yyyy-MM-dd').parse(toDate);
+    
+    DateTime currentDate = startDate;
+    while (currentDate.isBefore(endDate) || currentDate.isAtSameMomentAs(endDate)) {
+      dateRange.add(DateFormat('yyyy-MM-dd').format(currentDate));
+      currentDate = currentDate.add(Duration(days: 1));
+    }
+    
+    // Get data for each date
+    List<String> dates = [];
+    List<double> sales = [];
+    List<double> received = [];
+    List<double> expenses = [];
+    List<double> outstanding = [];
+    List<double> netCashFlow = [];
+    
+    for (String date in dateRange) {
+      final List<Map<String, dynamic>> maps = await db.rawQuery('''
+        SELECT 
+          SUM(CASE WHEN transaction_type = 'sale' THEN sales ELSE 0 END) as total_sales,
+          SUM(cash) + SUM(hdfc) + SUM(gpay) as total_received,
+          SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as total_expenses,
+          SUM(CASE WHEN transaction_type = 'sale' THEN outstanding ELSE 0 END) as total_outstanding,
+          (SUM(cash) + SUM(hdfc) + SUM(gpay)) - SUM(CASE WHEN transaction_type = 'expense' THEN payment ELSE 0 END) as net_cash_flow
+        FROM transactions
+        WHERE date = ?
+      ''', [date]);
+      
+      final row = maps.first;
+      
+      dates.add(date);
+      sales.add(row['total_sales'] ?? 0);
+      received.add(row['total_received'] ?? 0);
+      expenses.add(row['total_expenses'] ?? 0);
+      outstanding.add(row['total_outstanding'] ?? 0);
+      netCashFlow.add(row['net_cash_flow'] ?? 0);
+    }
+    
+    return {
+      'dates': dates,
+      'sales': sales,
+      'received': received,
+      'expenses': expenses,
+      'outstanding': outstanding,
+      'net_cash_flow': netCashFlow,
+    };
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/models ===
+--- File: credit.dart ---
+class Credit {
+  final String customerName;
+  final double totalOutstanding;
+  final String firstDate;
+  final String lastDate;
+  final int daysOutstanding;
+  final String status;
+
+  Credit({
+    required this.customerName,
+    required this.totalOutstanding,
+    required this.firstDate,
+    required this.lastDate,
+    required this.daysOutstanding,
+    required this.status,
+  });
+
+  factory Credit.fromMap(Map<String, dynamic> map) {
+    // Calculate status based on days outstanding
+    String status;
+    final days = map['days_outstanding'] as int;
+    if (days > 90) {
+      status = 'Overdue';
+    } else if (days > 30) {
+      status = 'Warning';
+    } else {
+      status = 'Good';
+    }
+
+    return Credit(
+      customerName: map['customer_name'],
+      totalOutstanding: map['total_outstanding'],
+      firstDate: map['first_date'],
+      lastDate: map['last_date'],
+      daysOutstanding: days,
+      status: status,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'customer_name': customerName,
+      'total_outstanding': totalOutstanding,
+      'first_date': firstDate,
+      'last_date': lastDate,
+      'days_outstanding': daysOutstanding,
+      'status': status,
+    };
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/models ===
+--- File: daily_summary.dart ---
+class DailySummary {
+  final String date;
+  final double totalSales;
+  final double totalCash;
+  final double totalhdfc;
+  final double totalGpay;
+  final double totalPayment;
+  final double totalReceived;
+  final double totalOutstanding;
+  final double netCashFlow;
+
+  DailySummary({
+    required this.date,
+    required this.totalSales,
+    required this.totalCash,
+    required this.totalhdfc,
+    required this.totalGpay,
+    required this.totalPayment,
+    required this.totalReceived,
+    required this.totalOutstanding,
+    required this.netCashFlow,
+  });
+
+  factory DailySummary.fromMap(Map<String, dynamic> map) {
+    return DailySummary(
+      date: map['date'],
+      totalSales: map['total_sales'],
+      totalCash: map['total_cash'],
+      totalhdfc: map['total_hdfc'],
+      totalGpay: map['total_gpay'],
+      totalPayment: map['total_payment'],
+      totalReceived: map['total_received'],
+      totalOutstanding: map['total_outstanding'],
+      netCashFlow: map['net_cash_flow'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'date': date,
+      'total_sales': totalSales,
+      'total_cash': totalCash,
+      'total_hdfc': totalhdfc,
+      'total_gpay': totalGpay,
+      'total_payment': totalPayment,
+      'total_received': totalReceived,
+      'total_outstanding': totalOutstanding,
+      'net_cash_flow': netCashFlow,
+    };
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/models ===
+--- File: transaction.dart ---
+class Transaction {
+  final int? id;
+  final String date;
+  final String customerName;
+  final double sales;
+  final double cash;
+  final double hdfc;
+  final double gpay;
+  final double payment;
+  final String transactionType;
+  final double outstanding;
+  final int? relatedCreditId;
+
+  Transaction({
+    this.id,
+    required this.date,
+    required this.customerName,
+    required this.sales,
+    required this.cash,
+    required this.hdfc,
+    required this.gpay,
+    required this.payment,
+    required this.transactionType,
+    required this.outstanding,
+    this.relatedCreditId,
+  });
+
+  factory Transaction.fromMap(Map<String, dynamic> map) {
+    return Transaction(
+      id: map['id'],
+      date: map['date'],
+      customerName: map['customer_name'],
+      sales: map['sales'],
+      cash: map['cash'],
+      hdfc: map['hdfc'],
+      gpay: map['gpay'],
+      payment: map['payment'],
+      transactionType: map['transaction_type'],
+      outstanding: map['outstanding'],
+      relatedCreditId: map['related_credit_id'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'date': date,
+      'customer_name': customerName,
+      'sales': sales,
+      'cash': cash,
+      'hdfc': hdfc,
+      'gpay': gpay,
+      'payment': payment,
+      'transaction_type': transactionType,
+      'outstanding': outstanding,
+      'related_credit_id': relatedCreditId,
+    };
+  }
+
+  double get totalReceived => cash + hdfc + gpay;
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/screens ===
+--- File: upload_screen.dart ---
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/screens/daily_report_screen.dart';
+import 'package:credit_tracker/widgets/custom_date_picker.dart';
+
+class UploadScreen extends StatefulWidget {
+  const UploadScreen({Key? key}) : super(key: key);
+
+  @override
+  _UploadScreenState createState() => _UploadScreenState();
+}
+
+class _UploadScreenState extends State<UploadScreen> {
+  File? _file;
+  bool _isUploading = false;
+  DateTime _selectedDate = DateTime.now();
+  
+  Future<void> _pickFile() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['xlsx', 'xls'],
+      );
+      
+      if (result != null) {
+        setState(() {
+          _file = File(result.files.single.path!);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking file: $e')),
+      );
+    }
+  }
+  
+  Future<void> _processFile() async {
+    if (_file == null) return;
+    
+    setState(() {
+      _isUploading = true;
+    });
+    
+    try {
+      final dateString = DateFormat('yyyy-MM-dd').format(_selectedDate);
+      final result = await Provider.of<DatabaseProvider>(context, listen: false)
+          .processExcelFile(_file!, dateString);
+      
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Processed ${result['rows_processed']} transactions for ${DateFormat('dd/MM/yyyy').format(_selectedDate)}'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      
+      // Navigate to daily report screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DailyReportScreen(date: dateString),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error processing file: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Upload Daily Report'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Upload Daily Report',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Upload your daily Excel report to process transactions and update credit records',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // Date picker
+                    Text(
+                      'Select Date',
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    const SizedBox(height: 8),
+                    CustomDatePicker(
+                      selectedDate: _selectedDate,
+                      onDateChanged: (date) {
+                        setState(() {
+                          _selectedDate = date;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // File upload area
+                    GestureDetector(
+                      onTap: _pickFile,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 2,
+                            style: BorderStyle.solid,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.upload_file,
+                              size: 48,
+                              color: Colors.grey.withOpacity(0.7),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Drag & drop your Excel file',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Your file should include columns for Particulars, SALES, CASH, kotak/hdfc, G PAY, and PAYMENT',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: _pickFile,
+                              child: const Text('Select File'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // Selected file info
+                    if (_file != null) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.description, size: 24),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _file!.path.split('/').last,
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(
+                                    '${(_file!.lengthSync() / 1024).toStringAsFixed(2)} KB • ${DateFormat('dd/MM/yyyy').format(_selectedDate)}',
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Action buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        OutlinedButton(
+                          onPressed: _file != null && !_isUploading
+                              ? () => setState(() => _file = null)
+                              : null,
+                          child: const Text('Clear'),
+                        ),
+                        ElevatedButton(
+                          onPressed: _file != null && !_isUploading
+                              ? _processFile
+                              : null,
+                          child: _isUploading
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text('Uploading...'),
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    Icon(Icons.upload, size: 16),
+                                    SizedBox(width: 8),
+                                    Text('Upload File'),
+                                  ],
+                                ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/screens ===
+--- File: credits_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/models/credit.dart';
+import 'package:credit_tracker/screens/credit_detail_screen.dart';
+
+class CreditsScreen extends StatefulWidget {
+  const CreditsScreen({Key? key}) : super(key: key);
+
+  @override
+  _CreditsScreenState createState() => _CreditsScreenState();
+}
+
+class _CreditsScreenState extends State<CreditsScreen> {
+  List<Credit> _credits = [];
+  List<Credit> _filteredCredits = [];
+  bool _isLoading = true;
+  String _searchQuery = '';
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadCredits();
+  }
+  
+  Future<void> _loadCredits() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final credits = await Provider.of<DatabaseProvider>(context, listen: false).getCredits();
+      setState(() {
+        _credits = credits;
+        _filteredCredits = credits;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading credits: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  void _filterCredits(String query) {
+    setState(() {
+      _searchQuery = query;
+      if (query.trim().isEmpty) {
+        _filteredCredits = _credits;
+      } else {
+        _filteredCredits = _credits.where((credit) {
+          return credit.customerName.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
+  }
+  
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Overdue':
+        return Colors.red;
+      case 'Warning':
+        return Colors.orange;
+      case 'Good':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Outstanding Credits'),
+      ),
+      body: RefreshIndicator(
+        onRefresh: _loadCredits,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search customers...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onChanged: _filterCredits,
+              ),
+            ),
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _filteredCredits.isEmpty
+                      ? Center(
+                          child: Text(
+                            _searchQuery.isEmpty
+                                ? 'No outstanding credits found'
+                                : 'No results found for "$_searchQuery"',
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(16.0),
+                          itemCount: _filteredCredits.length,
+                          itemBuilder: (context, index) {
+                            final credit = _filteredCredits[index];
+                            return Card(
+                              margin: const EdgeInsets.only(bottom: 16.0),
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CreditDetailScreen(
+                                        customerName: credit.customerName,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(12),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              credit.customerName,
+                                              style: Theme.of(context).textTheme.titleMedium,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: _getStatusColor(credit.status).withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            child: Text(
+                                              credit.status,
+                                              style: TextStyle(
+                                                color: _getStatusColor(credit.status),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '₹${NumberFormat('#,##,###.##').format(credit.totalOutstanding)}',
+                                        style: Theme.of(context).textTheme.headlineMedium,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Since: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(credit.firstDate))}',
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                          Text(
+                                            'Last activity: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(credit.lastDate))}',
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      const Divider(),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Outstanding for:',
+                                            style: Theme.of(context).textTheme.bodyMedium,
+                                          ),
+                                          Text(
+                                            '${credit.daysOutstanding} days',
+                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/screens ===
+--- File: home_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/screens/upload_screen.dart';
+import 'package:credit_tracker/screens/credits_screen.dart';
+import 'package:credit_tracker/screens/transactions_screen.dart';
+import 'package:credit_tracker/screens/reports_screen.dart';
+import 'package:credit_tracker/widgets/dashboard_card.dart';
+import 'package:credit_tracker/widgets/daily_summary_card.dart';
+import 'package:intl/intl.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Credit Tracker')
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            // Title
+            Text(
+              'Credit Tracking Dashboard',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Upload daily reports and track transactions',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                  ),
+            ),
+            const SizedBox(height: 24),
+
+            // Dashboard Cards Grid
+            GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.85,
+              shrinkWrap: true, // ✅ KEY TO PREVENT OVERFLOW
+              physics: const NeverScrollableScrollPhysics(), // ✅ Needed inside SingleChildScrollView
+              children: [
+                DashboardCard(
+                  title: 'Upload Report',
+                  value: 'Daily XLSX',
+                  description: 'Upload your daily transaction data',
+                  icon: Icons.upload_file,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const UploadScreen()),
+                  ),
+                  buttonText: 'Upload File',
+                ),
+                DashboardCard(
+                  title: 'View Credits',
+                  value: 'Outstanding',
+                  description: 'Track customer credits and payments',
+                  icon: Icons.credit_card,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CreditsScreen()),
+                  ),
+                  buttonText: 'View Credits',
+                  buttonVariant: 'outline',
+                ),
+                DashboardCard(
+                  title: 'Transactions',
+                  value: 'All Records',
+                  description: 'View all transaction history',
+                  icon: Icons.receipt_long,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const TransactionsScreen()),
+                  ),
+                  buttonText: 'Transactions',
+                  buttonVariant: 'outline',
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // Daily Summary Card
+            const DailySummaryCard(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/screens ===
+--- File: credit_detail_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/models/credit.dart';
+import 'package:credit_tracker/widgets/transaction_list.dart';
+import 'package:credit_tracker/widgets/payment_timeline.dart';
+
+class CreditDetailScreen extends StatefulWidget {
+  final String customerName;
+  
+  const CreditDetailScreen({
+    Key? key,
+    required this.customerName,
+  }) : super(key: key);
+
+  @override
+  _CreditDetailScreenState createState() => _CreditDetailScreenState();
+}
+
+class _CreditDetailScreenState extends State<CreditDetailScreen> with SingleTickerProviderStateMixin {
+  Credit? _creditDetails;
+  bool _isLoading = true;
+  late TabController _tabController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _loadCreditDetails();
+  }
+  
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+  
+  Future<void> _loadCreditDetails() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final creditDetails = await Provider.of<DatabaseProvider>(context, listen: false)
+          .getCreditDetails(widget.customerName);
+      
+      setState(() {
+        _creditDetails = creditDetails;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading credit details: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Overdue':
+        return Colors.red;
+      case 'Warning':
+        return Colors.orange;
+      case 'Good':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.customerName),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              // TODO: Implement export functionality
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Export functionality coming soon')),
+              );
+            },
+            tooltip: 'Export History',
+          ),
+        ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: _loadCreditDetails,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _creditDetails == null
+                ? const Center(child: Text('Customer not found'))
+                : Column(
+                    children: [
+                      // Credit summary cards
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _SummaryCard(
+                                    title: 'Outstanding Balance',
+                                    value: '₹${NumberFormat('#,##,###.##').format(_creditDetails!.totalOutstanding)}',
+                                    subtitle: 'Active since ${DateFormat('dd/MM/yyyy').format(DateTime.parse(_creditDetails!.firstDate))}',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _SummaryCard(
+                                    title: 'Credit Status',
+                                    value: _creditDetails!.status,
+                                    valueColor: _getStatusColor(_creditDetails!.status),
+                                    subtitle: _creditDetails!.status == 'Good'
+                                        ? 'Payments are on schedule'
+                                        : _creditDetails!.status == 'Warning'
+                                            ? 'Payment overdue by 30+ days'
+                                            : 'Payment overdue by 90+ days',
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _SummaryCard(
+                                    title: 'Last Activity',
+                                    value: DateFormat('dd/MM/yyyy').format(DateTime.parse(_creditDetails!.lastDate)),
+                                    subtitle: 'Outstanding for ${_creditDetails!.daysOutstanding} days',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Tabs
+                      TabBar(
+                        controller: _tabController,
+                        tabs: const [
+                          Tab(text: 'Transactions'),
+                          Tab(text: 'Payment Timeline'),
+                        ],
+                        labelColor: Theme.of(context).primaryColor,
+                        unselectedLabelColor: Colors.grey,
+                        indicatorColor: Theme.of(context).primaryColor,
+                      ),
+                      
+                      // Tab content
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            TransactionList(customerName: widget.customerName),
+                            PaymentTimeline(customerName: widget.customerName),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+      ),
+    );
+  }
+}
+
+class _SummaryCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final String subtitle;
+  final Color? valueColor;
+  
+  const _SummaryCard({
+    Key? key,
+    required this.title,
+    required this.value,
+    required this.subtitle,
+    this.valueColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: valueColor,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/screens ===
+--- File: reports_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/widgets/date_range_filter.dart';
+import 'package:credit_tracker/widgets/summary_charts.dart';
+import 'package:credit_tracker/widgets/daily_reports_list.dart';
+
+class ReportsScreen extends StatefulWidget {
+  const ReportsScreen({Key? key}) : super(key: key);
+
+  @override
+  _ReportsScreenState createState() => _ReportsScreenState();
+}
+
+class _ReportsScreenState extends State<ReportsScreen> {
+  Map<String, dynamic>? _summaryStats;
+  bool _isLoading = true;
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadSummaryStats();
+  }
+  
+  Future<void> _loadSummaryStats() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final fromDateStr = _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : null;
+      final toDateStr = _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : null;
+      
+      final summaryStats = await Provider.of<DatabaseProvider>(context, listen: false).getSummaryStats(
+        fromDate: fromDateStr,
+        toDate: toDateStr,
+      );
+      
+      setState(() {
+        _summaryStats = summaryStats;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading summary statistics: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Reports & Analytics'),
+      ),
+      body: RefreshIndicator(
+        onRefresh: _loadSummaryStats,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Date range filter
+                DateRangeFilter(
+                  fromDate: _fromDate,
+                  toDate: _toDate,
+                  onDateRangeChanged: (from, to) {
+                    setState(() {
+                      _fromDate = from;
+                      _toDate = to;
+                    });
+                    _loadSummaryStats();
+                  },
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // Summary cards
+                _isLoading
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(32.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : _summaryStats == null
+                        ? const Center(
+                            child: Text('No data available'),
+                          )
+                        : Column(
+                            children: [
+                              // Summary cards grid
+                              GridView.count(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: [
+                                  _SummaryCard(
+                                    title: 'Total Sales',
+                                    value: '₹${NumberFormat('#,##,###.##').format(_summaryStats!['total_sales'] ?? 0)}',
+                                    subtitle: 'Gross sales amount',
+                                  ),
+                                  _SummaryCard(
+                                    title: 'Total Received',
+                                    value: '₹${NumberFormat('#,##,###.##').format(_summaryStats!['total_received'] ?? 0)}',
+                                    subtitle: 'Cash + hdfc + GPay',
+                                  ),
+                                  _SummaryCard(
+                                    title: 'Outstanding',
+                                    value: '₹${NumberFormat('#,##,###.##').format(_summaryStats!['total_outstanding'] ?? 0)}',
+                                    subtitle: 'Credit given to customers',
+                                  ),
+                                  _SummaryCard(
+                                    title: 'Expenses',
+                                    value: '₹${NumberFormat('#,##,###.##').format(_summaryStats!['total_expenses'] ?? 0)}',
+                                    subtitle: 'Total expenses',
+                                  ),
+                                  _SummaryCard(
+                                    title: 'Net Cash Flow',
+                                    value: '₹${NumberFormat('#,##,###.##').format(_summaryStats!['net_cash_flow'] ?? 0)}',
+                                    subtitle: 'Received - Expenses',
+                                    valueColor: (_summaryStats!['net_cash_flow'] ?? 0) >= 0 ? Colors.green : Colors.red,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                
+                const SizedBox(height: 24),
+                
+                // Charts
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Summary Charts',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Visual representation of your financial data',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 16),
+                        SummaryCharts(
+                          fromDate: _fromDate,
+                          toDate: _toDate,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // Daily reports list
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Daily Reports',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'View detailed reports for each day',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 16),
+                        DailyReportsList(
+                          fromDate: _fromDate,
+                          toDate: _toDate,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final String subtitle;
+  final Color? valueColor;
+  
+  const _SummaryCard({
+    Key? key,
+    required this.title,
+    required this.value,
+    required this.subtitle,
+    this.valueColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: valueColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+=== Directory: /home/tanishq/Documents/app_2/lib/screens ===
+--- File: daily_report_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/widgets/transaction_list.dart';
+// import 'package:credit_tracker/widgets/daily_charts.dart';
+
+class DailyReportScreen extends StatefulWidget {
+  final String date;
+  
+  const DailyReportScreen({Key? key, required this.date}) : super(key: key);
+
+  @override
+  _DailyReportScreenState createState() => _DailyReportScreenState();
+}
+
+class _DailyReportScreenState extends State<DailyReportScreen> with SingleTickerProviderStateMixin {
+  bool _isLoading = true;
+  late TabController _tabController;
+  
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+  
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Daily Report: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(widget.date))}'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Export functionality coming soon')),
+              );
+            },
+            tooltip: 'Export Report',
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          // Summary cards
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: FutureBuilder(
+              future: Provider.of<DatabaseProvider>(context, listen: false)
+                  .getDailySummary(widget.date),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                
+                if (!snapshot.hasData) {
+                  return const Center(child: Text('No data available for this date'));
+                }
+                
+                final summary = snapshot.data!;
+                
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _SummaryCard(
+                            title: 'Total Sales',
+                            value: '₹${NumberFormat('#,##,###.##').format(summary.totalSales)}',
+                            subtitle: 'Gross sales amount',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _SummaryCard(
+                            title: 'Total Received',
+                            value: '₹${NumberFormat('#,##,###.##').format(summary.totalReceived)}',
+                            subtitle: 'Cash + hdfc + GPay',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _SummaryCard(
+                            title: 'Outstanding',
+                            value: '₹${NumberFormat('#,##,###.##').format(summary.totalOutstanding)}',
+                            subtitle: 'New credit given today',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _SummaryCard(
+                            title: 'Net Cash Flow',
+                            value: '₹${NumberFormat('#,##,###.##').format(summary.netCashFlow)}',
+                            valueColor: summary.netCashFlow >= 0 ? Colors.green : Colors.red,
+                            subtitle: 'Received - Expenses',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          
+          // Tabs
+          TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: 'Transactions'),
+              Tab(text: 'Charts'),
+            ],
+            labelColor: Theme.of(context).primaryColor,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Theme.of(context).primaryColor,
+          ),
+          
+          // Tab content
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                TransactionList(date: widget.date),
+                Center(child: Text('Charts coming soon')), // Placeholder for charts
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final String subtitle;
+  final Color? valueColor;
+  
+  const _SummaryCard({
+    Key? key,
+    required this.title,
+    required this.value,
+    required this.subtitle,
+    this.valueColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                color: valueColor,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+=== Directory: /home/tanishq/Documents/app_2/lib/screens ===
+--- File: transactions_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+import 'package:credit_tracker/providers/database_provider.dart';
+import 'package:credit_tracker/models/transaction.dart';
+import 'package:credit_tracker/widgets/date_range_filter.dart';
+import 'package:credit_tracker/screens/credit_detail_screen.dart';
+
+class TransactionsScreen extends StatefulWidget {
+  const TransactionsScreen({Key? key}) : super(key: key);
+
+  @override
+  _TransactionsScreenState createState() => _TransactionsScreenState();
+}
+
+class _TransactionsScreenState extends State<TransactionsScreen> {
+  List<Transaction> _transactions = [];
+  List<Transaction> _filteredTransactions = [];
+  bool _isLoading = true;
+  String _searchQuery = '';
+  String _transactionType = 'all';
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  bool _showFilters = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadTransactions();
+  }
+  
+  Future<void> _loadTransactions() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final fromDateStr = _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : null;
+      final toDateStr = _toDate != null ? DateFormat('yyyy-MM-dd').format(_toDate!) : null;
+      
+      final transactions = await Provider.of<DatabaseProvider>(context, listen: false).getTransactions(
+        fromDate: fromDateStr,
+        toDate: toDateStr,
+        transactionType: _transactionType != 'all' ? _transactionType : null,
+      );
+      
+      setState(() {
+        _transactions = transactions;
+        _applySearchFilter();
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error loading transactions: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  void _applySearchFilter() {
+    if (_searchQuery.trim().isEmpty) {
+      _filteredTransactions = _transactions;
+    } else {
+      _filteredTransactions = _transactions.where((transaction) {
+        return transaction.customerName.toLowerCase().contains(_searchQuery.toLowerCase());
+      }).toList();
+    }
+  }
+  
+  void _exportTransactions() {
+    // TODO: Implement export functionality
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Export functionality coming soon')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Transactions'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () {
+              setState(() {
+                _showFilters = !_showFilters;
+              });
+            },
+            tooltip: 'Filters',
+          ),
+          IconButton(
+            icon: const Icon(Icons.download),
+            onPressed: _exportTransactions,
+            tooltip: 'Export',
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search by customer name...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                  _applySearchFilter();
+                });
+              },
+            ),
+          ),
+          
+          if (_showFilters) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Transaction Type',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    value: _transactionType,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: 'all', child: Text('All Transactions')),
+                      DropdownMenuItem(value: 'sale', child: Text('Sales')),
+                      DropdownMenuItem(value: 'repayment', child: Text('Repayments')),
+                      DropdownMenuItem(value: 'expense', child: Text('Expenses')),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _transactionType = value!;
+                      });
+                      _loadTransactions();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Date Range',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  DateRangeFilter(
+                    fromDate: _fromDate,
+                    toDate: _toDate,
+                    onDateRangeChanged: (from, to) {
+                      setState(() {
+                        _fromDate = from;
+                        _toDate = to;
+                      });
+                      _loadTransactions();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ],
+          
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _filteredTransactions.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No transactions found',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: _filteredTransactions.length,
+                        itemBuilder: (context, index) {
+                          final transaction = _filteredTransactions[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            child: ListTile(
+                              title: Text(transaction.customerName),
+                              subtitle: Text(
+                                '${DateFormat('dd/MM/yyyy').format(DateTime.parse(transaction.date))} • ${transaction.transactionType.toUpperCase()}',
+                              ),
+                              trailing: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  if (transaction.sales > 0)
+                                    Text(
+                                      '₹${NumberFormat('#,##,###.##').format(transaction.sales)}',
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                  if (transaction.totalReceived > 0)
+                                    Text(
+                                      'Received: ₹${NumberFormat('#,##,###.##').format(transaction.totalReceived)}',
+                                      style: TextStyle(
+                                        color: Colors.green[700],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  if (transaction.payment > 0)
+                                    Text(
+                                      'Expense: ₹${NumberFormat('#,##,###.##').format(transaction.payment)}',
+                                      style: TextStyle(
+                                        color: Colors.red[700],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CreditDetailScreen(
+                                      customerName: transaction.customerName,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+

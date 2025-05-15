@@ -16,15 +16,13 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Credit Tracker')
+        title: const Text('Credit Tracker'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // Title
             Text(
               'Credit Tracking Dashboard',
               style: Theme.of(context).textTheme.headlineMedium,
@@ -33,19 +31,18 @@ class HomeScreen extends StatelessWidget {
             Text(
               'Upload daily reports and track transactions',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color,
-                  ),
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
             ),
             const SizedBox(height: 24),
-
-            // Dashboard Cards Grid
+            
+            // Dashboard cards
             GridView.count(
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 0.85,
-              shrinkWrap: true, // ✅ KEY TO PREVENT OVERFLOW
-              physics: const NeverScrollableScrollPhysics(), // ✅ Needed inside SingleChildScrollView
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 DashboardCard(
                   title: 'Upload Report',
@@ -79,15 +76,27 @@ class HomeScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(builder: (context) => const TransactionsScreen()),
                   ),
-                  buttonText: 'Transactions',
+                  buttonText: 'View Transactions',
+                  buttonVariant: 'outline',
+                ),
+                DashboardCard(
+                  title: 'Reports',
+                  value: 'Analytics',
+                  description: 'View reports and statistics',
+                  icon: Icons.pie_chart,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ReportsScreen()),
+                  ),
+                  buttonText: 'View Reports',
                   buttonVariant: 'outline',
                 ),
               ],
             ),
-
+            
             const SizedBox(height: 24),
-
-            // Daily Summary Card
+            
+            // Daily summary
             const DailySummaryCard(),
           ],
         ),

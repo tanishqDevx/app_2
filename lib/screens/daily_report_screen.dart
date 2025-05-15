@@ -82,7 +82,7 @@ class _DailyReportScreenState extends State<DailyReportScreen> with SingleTicker
                           child: _SummaryCard(
                             title: 'Total Received',
                             value: '₹${NumberFormat('#,##,###.##').format(summary.totalReceived)}',
-                            subtitle: 'Cash + HDFC + GPay',
+                            subtitle: 'All payment methods',
                           ),
                         ),
                       ],
@@ -108,6 +108,62 @@ class _DailyReportScreenState extends State<DailyReportScreen> with SingleTicker
                         ),
                       ],
                     ),
+                    
+                    // Payment Methods Breakdown
+                    if (summary.paymentMethods.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Payment Methods',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 12),
+                              ...summary.paymentMethods.entries.map((entry) => 
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(entry.key),
+                                      Text(
+                                        '₹${NumberFormat('#,##,###.##').format(entry.value)}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green[700],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ).toList(),
+                              if (summary.totalCash > 0) ...[
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Cash'),
+                                      Text(
+                                        '₹${NumberFormat('#,##,###.##').format(summary.totalCash)}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green[700],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 );
               },

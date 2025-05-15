@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:credit_tracker/providers/database_provider.dart';
 import 'package:credit_tracker/models/transaction.dart';
+import 'package:credit_tracker/models/payment_method.dart';
 
 class TransactionList extends StatefulWidget {
   final String? customerName;
@@ -194,7 +195,7 @@ class _TransactionListState extends State<TransactionList> {
                                   ),
                                 ],
                                 
-                                if (transaction.cash > 0 || transaction.hdfc > 0 || transaction.gpay > 0) ...[
+                                if (transaction.cash > 0 || transaction.paymentMethods.isNotEmpty) ...[
                                   const SizedBox(height: 8),
                                   Text(
                                     'Received:',
@@ -208,16 +209,12 @@ class _TransactionListState extends State<TransactionList> {
                                       value: '₹${NumberFormat('#,##,###.##').format(transaction.cash)}',
                                       valueColor: Colors.green[700],
                                     ),
-                                  if (transaction.hdfc > 0)
+                                  
+                                  // Display all payment methods
+                                  for (var method in transaction.paymentMethods)
                                     _TransactionDetail(
-                                      label: 'HDFC',
-                                      value: '₹${NumberFormat('#,##,###.##').format(transaction.hdfc)}',
-                                      valueColor: Colors.green[700],
-                                    ),
-                                  if (transaction.gpay > 0)
-                                    _TransactionDetail(
-                                      label: 'GPay',
-                                      value: '₹${NumberFormat('#,##,###.##').format(transaction.gpay)}',
+                                      label: method.method,
+                                      value: '₹${NumberFormat('#,##,###.##').format(method.amount)}',
                                       valueColor: Colors.green[700],
                                     ),
                                 ],

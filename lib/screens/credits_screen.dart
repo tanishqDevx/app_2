@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:credit_tracker/providers/database_provider.dart';
 import 'package:credit_tracker/models/credit.dart';
 import 'package:credit_tracker/screens/credit_detail_screen.dart';
@@ -17,30 +17,32 @@ class _CreditsScreenState extends State<CreditsScreen> {
   List<Credit> _filteredCredits = [];
   bool _isLoading = true;
   String _searchQuery = '';
-
+  String _sortBy = 'days'; // Default sort by days outstanding
+  
   @override
   void initState() {
     super.initState();
     _loadCredits();
   }
-
+  
   Future<void> _loadCredits() async {
     setState(() {
       _isLoading = true;
     });
-
+    
     try {
       final credits = await Provider.of<DatabaseProvider>(context, listen: false).getCredits();
       setState(() {
         _credits = credits;
-        _filteredCredits = credits;
+        _sortCredits();
+        _filterCredits(_searchQuery);
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error loading credits: $e'),
@@ -49,7 +51,26 @@ class _CreditsScreenState extends State<CreditsScreen> {
       );
     }
   }
-
+  
+  void _sortCredits() {
+    setState(() {
+      switch (_sortBy) {
+        case 'name':
+          _credits.sort((a, b) => a.customerName.compareTo(b.customerName));
+          break;
+        case 'amount':
+          _credits.sort((a, b) => b.totalOutstanding.compareTo(a.totalOutstanding));
+          break;
+        case 'days':
+          _credits.sort((a, b) => b.daysOutstanding.compareTo(a.daysOutstanding));
+          break;
+        case 'date':
+          _credits.sort((a, b) => b.lastDate.compareTo(a.lastDate));
+          break;
+      }
+    });
+  }
+  
   void _filterCredits(String query) {
     setState(() {
       _searchQuery = query;
@@ -62,7 +83,7 @@ class _CreditsScreenState extends State<CreditsScreen> {
       }
     });
   }
-
+  
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Overdue':
@@ -81,6 +102,37 @@ class _CreditsScreenState extends State<CreditsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Outstanding Credits'),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.sort),
+            tooltip: 'Sort by',
+            onSelected: (value) {
+              setState(() {
+                _sortBy = value;
+                _sortCredits();
+                _filterCredits(_searchQuery);
+              });
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'name',
+                child: Text('Sort by Name'),
+              ),
+              const PopupMenuItem(
+                value: 'amount',
+                child: Text('Sort by Amount'),
+              ),
+              const PopupMenuItem(
+                value: 'days',
+                child: Text('Sort by Days Outstanding'),
+              ),
+              const PopupMenuItem(
+                value: 'date',
+                child: Text('Sort by Last Activity'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _loadCredits,
@@ -109,8 +161,8 @@ class _CreditsScreenState extends State<CreditsScreen> {
                                 ? 'No outstanding credits found'
                                 : 'No results found for "$_searchQuery"',
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: Theme.of(context).textTheme.bodySmall?.color,
-                                ),
+                              color: Theme.of(context).textTheme.bodySmall?.color,
+                            ),
                           ),
                         )
                       : ListView.builder(
@@ -129,34 +181,83 @@ class _CreditsScreenState extends State<CreditsScreen> {
                                         customerName: credit.customerName,
                                       ),
                                     ),
-                                  );
+                                  ).then((_) => _loadCredits()); // Refresh after returning
                                 },
                                 borderRadius: BorderRadius.circular(12),
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: Text(
-                                          credit.customerName,
-                                          style: Theme.of(context).textTheme.titleMedium,
-                                        )
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            '₹${NumberFormat('#,##,###.##').format(credit.totalOutstanding)}',
-                                            style: TextStyle(
-                                              color: _getStatusColor(credit.status),
-                                              fontWeight: FontWeight.bold,
+                                          Expanded(
+                                            child: Text(
+                                              credit.customerName,
+                                              style: Theme.of(context).textTheme.titleMedium,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          const SizedBox(height: 8),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: _getStatusColor(credit.status).withOpacity(0.1),
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            child: Text(
+                                              credit.status,
+                                              style: TextStyle(
+                                                color: _getStatusColor(credit.status),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '₹${NumberFormat('#,##,###.##').format(credit.totalOutstanding)}',
+                                        style: Theme.of(context).textTheme.headlineMedium,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
                                           Text(
-                                            'Last Paid: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(credit.lastDate))}',
+                                            'Since: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(credit.firstDate))}',
                                             style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                          Text(
+                                            'Last activity: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(credit.lastDate))}',
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      const Divider(),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Outstanding for:',
+                                            style: Theme.of(context).textTheme.bodyMedium,
+                                          ),
+                                          Text(
+                                            '${credit.daysOutstanding} days',
+                                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: credit.daysOutstanding > 90 
+                                                ? Colors.red 
+                                                : credit.daysOutstanding > 30 
+                                                  ? Colors.orange 
+                                                  : null,
+                                            ),
                                           ),
                                         ],
                                       ),
