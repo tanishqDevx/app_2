@@ -226,7 +226,7 @@ class DatabaseProvider with ChangeNotifier {
         
         // Skip rows with specific keywords or TOTAL row
         if (customerName.toLowerCase().contains('manoj ji') || 
-            customerName.toLowerCase().contains('cashin office') ||
+            customerName.toLowerCase().contains('cash in office') ||
             customerName.toLowerCase().contains('total')) {
           continue;
         }
