@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:credit_tracker/providers/database_provider.dart';
 import 'package:credit_tracker/models/credit.dart';
 import 'package:credit_tracker/widgets/transaction_list.dart';
-import 'package:credit_tracker/widgets/payment_timeline.dart';
 
 class CreditDetailScreen extends StatefulWidget {
   final String customerName;
@@ -26,7 +25,7 @@ class _CreditDetailScreenState extends State<CreditDetailScreen> with SingleTick
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 1, vsync: this); // Only 1 tab now
     _loadCreditDetails();
   }
   
@@ -152,7 +151,6 @@ class _CreditDetailScreenState extends State<CreditDetailScreen> with SingleTick
                         controller: _tabController,
                         tabs: const [
                           Tab(text: 'Transactions'),
-                          Tab(text: 'Payment Timeline'),
                         ],
                         labelColor: Theme.of(context).primaryColor,
                         unselectedLabelColor: Colors.grey,
@@ -165,7 +163,6 @@ class _CreditDetailScreenState extends State<CreditDetailScreen> with SingleTick
                           controller: _tabController,
                           children: [
                             TransactionList(customerName: widget.customerName),
-                            PaymentTimeline(customerName: widget.customerName),
                           ],
                         ),
                       ),
