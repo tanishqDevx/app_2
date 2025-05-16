@@ -84,6 +84,11 @@ class _CreditsScreenState extends State<CreditsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final totalOutstanding = _filteredCredits.fold<double>(
+      0,
+      (sum, credit) => sum + credit.totalOutstanding,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Outstanding Credits'),
@@ -123,8 +128,44 @@ class _CreditsScreenState extends State<CreditsScreen> {
         onRefresh: _loadCredits,
         child: Column(
           children: [
-            Padding(
+            // Add total outstanding card
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.all(16.0),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Total Outstanding',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '₹${NumberFormat('#,##,###.##').format(totalOutstanding)}',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${_filteredCredits.length} active credits',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Existing search field
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search customers...',
@@ -136,6 +177,8 @@ class _CreditsScreenState extends State<CreditsScreen> {
                 onChanged: _filterCredits,
               ),
             ),
+
+            // Existing list
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
