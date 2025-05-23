@@ -222,7 +222,7 @@ class DatabaseProvider with ChangeNotifier {
         final nameCell = row[particularsIndex];
         if (nameCell == null || nameCell.value.toString().trim().isEmpty) continue;
         
-        final customerName = nameCell.value.toString().trim();
+        final customerName = nameCell.value.toString().toLowerCase().trim();
         
         // Skip rows with specific keywords or TOTAL row
         if (customerName.toLowerCase().contains('manoj ji') || 
